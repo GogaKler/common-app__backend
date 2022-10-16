@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidateInputPipe } from './core/pipes/validate.pipe';
 
 async function start() {
     const PORT = process.env.PORT || 6001;
@@ -18,6 +19,7 @@ async function start() {
 
     app.enableCors();
     app.setGlobalPrefix('api/');
+    app.useGlobalPipes(new ValidateInputPipe());
     await app.listen(PORT, () => {
         console.log(`Server start on port === ${PORT}`);
     });

@@ -5,6 +5,9 @@ import { ApiProperty } from '@nestjs/swagger';
 interface UserAttributes {
     id: number;
     name: string;
+    status: string;
+    // surname: string;
+    // patronymic: string;
     email: string;
     password: string;
 }
@@ -38,6 +41,36 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
     name: string;
 
     @ApiProperty({
+        example: 'Frontend Developer',
+        description: 'Статус пользователя'
+    })
+    @Column({
+        type: DataType.STRING,
+        allowNull: true
+    })
+    status: string;
+
+    // @ApiProperty({
+    //     example: 'Алешкинов',
+    //     description: 'Фамилия пользователя'
+    // })
+    // @Column({
+    //     type: DataType.STRING,
+    //     allowNull: false
+    // })
+    // surname: string;
+    //
+    // @ApiProperty({
+    //     example: 'Сергеевич',
+    //     description: 'Отчество пользователя'
+    // })
+    // @Column({
+    //     type: DataType.STRING,
+    //     allowNull: false
+    // })
+    // patronymic: string;
+
+    @ApiProperty({
         example: 'user@mail.com',
         description: 'email пользователя'
     })
@@ -65,7 +98,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
     @Column({
         type: DataType.ENUM,
         values: ['male', 'female'],
-        allowNull: false
+        allowNull: true
     })
     gender: string;
 }

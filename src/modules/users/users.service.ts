@@ -11,24 +11,56 @@ export class UsersService {
         return await this.userRepository.create<User>(user);
     }
 
+    async updateStatusUser(id: number, status: string) {
+        const [numberOfAffectedRows, updatedStatus] = await this.userRepository.update(
+            { status },
+            {
+                where: { id },
+                returning: true
+            }
+        );
+
+        console.log('fdsfsdf', numberOfAffectedRows, 'fdsfsdf', updatedStatus);
+
+        return updatedStatus;
+    }
+
     async findAllUsers() {
         return await this.userRepository.findAll<User>({
-            include: { all: true }
+            attributes: { exclude: ['password'] }
         });
     }
 
     async findOneByEmail(email: string): Promise<User> {
         return await this.userRepository.findOne<User>({
-            where: {
-                email
-            },
-            include: {
-                all: true
-            }
+            where: { email },
+            attributes: { exclude: ['password'] }
+        });
+    }
+
+    async findOneByLogin(name: string): Promise<User> {
+        return await this.userRepository.findOne<User>({
+            where: { name },
+            attributes: { exclude: ['password'] }
         });
     }
 
     async findOneById(id: number): Promise<User> {
-        return await this.userRepository.findOne<User>({ where: { id } });
+        return await this.userRepository.findOne<User>({
+            where: { id },
+            attributes: { exclude: ['password'] }
+        });
+    }
+
+    async findOneByEmail_AUTH(email: string): Promise<User> {
+        return await this.userRepository.findOne<User>({
+            where: { email }
+        });
+    }
+
+    async findOneByLogin__AUTH(name: string): Promise<User> {
+        return await this.userRepository.findOne<User>({
+            where: { name }
+        });
     }
 }
