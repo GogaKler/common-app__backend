@@ -57,7 +57,6 @@ export class AuthService {
     }
 
     private async comparePassword(enteredPassword, dbPassword) {
-        console.log(enteredPassword, dbPassword);
         return await bcrypt.compare(enteredPassword, dbPassword);
     }
 }
