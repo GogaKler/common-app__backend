@@ -20,7 +20,7 @@ export class UsersService {
             }
         );
 
-        console.log('fdsfsdf', numberOfAffectedRows, 'fdsfsdf', updatedStatus);
+        console.log(numberOfAffectedRows, updatedStatus);
 
         return updatedStatus;
     }
