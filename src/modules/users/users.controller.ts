@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './users.model';
@@ -21,7 +21,7 @@ export class UsersController {
     @ApiResponse({ status: 200, type: User })
     @Put('status')
     @UseGuards(AuthGuard('jwt'))
-    updateUserStatus(@Body() body, @Request() req) {
+    updateUserStatus(@Body() body, @Request() req): Promise<User> {
         return this.userService.updateStatusUser(req.user.id, body.status);
     }
 

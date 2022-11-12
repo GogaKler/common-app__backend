@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './users.model';
 import { USER_REPOSITORY } from '../../core/constants';
 import { UserDto } from './dto/user.dto';
@@ -11,8 +11,8 @@ export class UsersService {
         return await this.userRepository.create<User>(user);
     }
 
-    async updateStatusUser(id: number, status: string) {
-        const [numberOfAffectedRows, updatedStatus] = await this.userRepository.update(
+    async updateStatusUser(id: number, status: string): Promise<User> {
+        const [numberOfAffectedRows, [updatedStatus]] = await this.userRepository.update<User>(
             { status },
             {
                 where: { id },
@@ -20,7 +20,9 @@ export class UsersService {
             }
         );
 
-        console.log(numberOfAffectedRows, updatedStatus);
+        if (numberOfAffectedRows === 0) {
+            throw new NotFoundException('Вы не имеете право менять этот статус');
+        }
 
         return updatedStatus;
     }
