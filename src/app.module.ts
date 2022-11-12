@@ -7,9 +7,23 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PostsService } from './modules/posts/posts.service';
 import { PostsModule } from './modules/posts/posts.module';
 import { postsProviders } from './modules/posts/posts.providers';
+import { FilesModule } from './modules/files/files.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import * as path from 'path';
 
 @Module({
-    imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, UsersModule, AuthModule, PostsModule],
+    imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        ServeStaticModule.forRoot({
+            rootPath: path.resolve(__dirname, 'static'),
+            exclude: ['/api*']
+        }),
+        DatabaseModule,
+        UsersModule,
+        AuthModule,
+        PostsModule,
+        FilesModule
+    ],
     controllers: [UsersController],
     providers: [PostsService, ...postsProviders]
 })

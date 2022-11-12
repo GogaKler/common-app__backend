@@ -1,9 +1,21 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Post,
+    Put,
+    Request,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './users.model';
 import { UserDto } from './dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -23,6 +35,13 @@ export class UsersController {
     @UseGuards(AuthGuard('jwt'))
     updateUserStatus(@Body() body, @Request() req): Promise<User> {
         return this.userService.updateStatusUser(req.user.id, body.status);
+    }
+
+    @Post('avatar')
+    @UseGuards(AuthGuard('jwt'))
+    @UseInterceptors(FileInterceptor('avatar'))
+    uploadUserAvatar(@UploadedFile() avatar, @Request() req) {
+        return this.userService.uploadAvatar(req.user.id, avatar);
     }
 
     @ApiOperation({ summary: 'Получение всех пользователей' })
