@@ -3,10 +3,43 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { UserDto } from '../users/dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly userService: UsersService, private readonly jwtService: JwtService) {}
+    constructor(
+        private readonly userService: UsersService,
+        private readonly jwtService: JwtService,
+        private readonly configService: ConfigService
+    ) {}
+
+    public getCookieWithJwtAccessToken(userId: number) {
+        const payload = { userId };
+        const token = this.jwtService.sign(payload, {
+            secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+            expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`
+        });
+        return `Authentication=${token}; Path=/; Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`;
+    }
+
+    public getCookieWithJwtRefreshToken(userId: number) {
+        const payload = { userId };
+        const token = this.jwtService.sign(payload, {
+            secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+            expiresIn: `${this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME')}`
+        });
+        const cookie = `Refresh=${token}; Path=/; Max-Age=${this.configService.get(
+            'JWT_REFRESH_TOKEN_EXPIRATION_TIME'
+        )}`;
+        return {
+            cookie,
+            token
+        };
+    }
+
+    public getCookiesForLogOut() {
+        return ['Authentication=; Path=/; Max-Age=0', 'Refresh=; Path=/; Max-Age=0'];
+    }
 
     async validateUser(username: string, pass: string) {
         const userEmail = await this.userService.findOneByEmail_AUTH(username);
@@ -25,11 +58,6 @@ export class AuthService {
 
         const { ...result } = user['dataValues'];
         return result;
-    }
-
-    public async login(user) {
-        const token = await this.generateToken(user);
-        return { token };
     }
 
     public async register(user: UserDto) {

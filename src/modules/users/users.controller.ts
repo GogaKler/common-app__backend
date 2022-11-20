@@ -16,6 +16,7 @@ import { User } from './users.model';
 import { UserDto } from './dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -44,6 +45,7 @@ export class UsersController {
         return this.userService.uploadAvatar(req.user.id, avatar);
     }
 
+    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: 'Получение всех пользователей' })
     @ApiResponse({ status: 200, type: [User] })
     @Get()
@@ -51,6 +53,7 @@ export class UsersController {
         return this.userService.findAllUsers();
     }
 
+    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: 'Получить пользователя по id' })
     @ApiResponse({ status: 200, type: [User] })
     @Get(':id')

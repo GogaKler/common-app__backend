@@ -6,17 +6,18 @@ import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { JwtRefreshTokenStrategy } from './jwt-refresh-token.strategy';
 
 @Module({
     imports: [
         PassportModule,
         UsersModule,
         JwtModule.register({
-            secret: process.env.JWTKEY,
-            signOptions: { expiresIn: process.env.TOKEN_EXPIRATION }
+            secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+            signOptions: { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME }
         })
     ],
-    providers: [AuthService, LocalStrategy, JwtStrategy],
+    providers: [AuthService, LocalStrategy, JwtStrategy, JwtRefreshTokenStrategy],
     controllers: [AuthController]
 })
 export class AuthModule {}

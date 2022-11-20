@@ -9,11 +9,21 @@ import { PostsModule } from './modules/posts/posts.module';
 import { postsProviders } from './modules/posts/posts.providers';
 import { FilesModule } from './modules/files/files.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { AppGateway } from './app.gateway';
 import * as path from 'path';
+import * as Joi from 'joi';
 
 @Module({
     imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            validationSchema: Joi.object({
+                JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+                JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+                JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+                JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required()
+            })
+        }),
         ServeStaticModule.forRoot({
             rootPath: path.resolve(__dirname, 'static'),
             exclude: ['/api*']
@@ -24,7 +34,8 @@ import * as path from 'path';
         PostsModule,
         FilesModule
     ],
+    exports: [AppGateway],
     controllers: [UsersController],
-    providers: [PostsService, ...postsProviders]
+    providers: [PostsService, AppGateway, ...postsProviders]
 })
 export class AppModule {}

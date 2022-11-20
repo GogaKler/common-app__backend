@@ -2,30 +2,19 @@ import { Optional } from 'sequelize';
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { serverPath } from '../../core/helpers/serverPath';
-import { Exclude } from 'class-transformer';
 
 interface UserAttributes {
     id: number;
-    name: string;
-    status: string;
-    avatar: string;
-    // surname: string;
-    // patronymic: string;
     email: string;
-    password: string;
-    currentHashedRefreshToken: string;
+    text: string;
 }
 
 type UserCreationAttributes = Optional<UserAttributes, 'email'>;
 
 @Table({
-    tableName: 'users'
+    tableName: 'chats'
 })
-export class User extends Model<UserAttributes, UserCreationAttributes> {
-    @ApiProperty({
-        example: '1',
-        description: 'Уникальный id'
-    })
+export class Chats extends Model<UserAttributes, UserCreationAttributes> {
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -114,10 +103,4 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
         allowNull: true
     })
     gender: string;
-
-    @Column({
-        allowNull: true
-    })
-    @Exclude()
-    currentHashedRefreshToken: string;
 }
