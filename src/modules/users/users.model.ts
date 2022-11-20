@@ -2,6 +2,7 @@ import { Optional } from 'sequelize';
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { serverPath } from '../../core/helpers/serverPath';
+import { Exclude } from 'class-transformer';
 
 interface UserAttributes {
     id: number;
@@ -12,6 +13,7 @@ interface UserAttributes {
     // patronymic: string;
     email: string;
     password: string;
+    currentHashedRefreshToken: string;
 }
 
 type UserCreationAttributes = Optional<UserAttributes, 'email'>;
@@ -112,4 +114,10 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
         allowNull: true
     })
     gender: string;
+
+    @Column({
+        allowNull: true
+    })
+    @Exclude()
+    currentHashedRefreshToken: string;
 }
