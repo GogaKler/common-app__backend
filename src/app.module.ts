@@ -12,6 +12,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { AppGateway } from './app.gateway';
 import * as path from 'path';
 import * as Joi from 'joi';
+import { appProviders } from './app.providers';
 
 @Module({
     imports: [
@@ -36,6 +37,6 @@ import * as Joi from 'joi';
     ],
     exports: [AppGateway],
     controllers: [UsersController],
-    providers: [PostsService, AppGateway, ...postsProviders]
+    providers: [PostsService, AppGateway, ...postsProviders, ...appProviders]
 })
 export class AppModule {}

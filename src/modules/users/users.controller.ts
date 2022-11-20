@@ -1,22 +1,9 @@
-import {
-    Body,
-    Controller,
-    Get,
-    Param,
-    Post,
-    Put,
-    Request,
-    UploadedFile,
-    UseGuards,
-    UseInterceptors
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Request, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './users.model';
 import { UserDto } from './dto/user.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -33,19 +20,16 @@ export class UsersController {
     @ApiOperation({ summary: 'Обновление статуса пользователя' })
     @ApiResponse({ status: 200, type: User })
     @Put('status')
-    @UseGuards(AuthGuard('jwt'))
     updateUserStatus(@Body() body, @Request() req): Promise<User> {
         return this.userService.updateStatusUser(req.user.id, body.status);
     }
 
     @Post('avatar')
-    @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('avatar'))
     uploadUserAvatar(@UploadedFile() avatar, @Request() req) {
         return this.userService.uploadAvatar(req.user.id, avatar);
     }
 
-    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: 'Получение всех пользователей' })
     @ApiResponse({ status: 200, type: [User] })
     @Get()
@@ -53,7 +37,6 @@ export class UsersController {
         return this.userService.findAllUsers();
     }
 
-    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: 'Получить пользователя по id' })
     @ApiResponse({ status: 200, type: [User] })
     @Get(':id')
